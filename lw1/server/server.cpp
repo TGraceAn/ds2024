@@ -6,21 +6,27 @@
 #include <fstream>
 #include <unistd.h> // For close()
 
-#define PORT 5000
+#define PORT 8080
 #define MAX_FILENAME_LEN 1024
+#define SERVER_IP "127.0.0.1"
+
 
 int main() {
     // Create a socket
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+
     if (server_socket == -1) {
         std::cerr << "Error creating socket" << std::endl;
         return 1;
+    }
+    else {
+        std::cout << "Socket created" << std::endl;
     }
 
     // Configure server address
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
-    server_address.sin_addr.s_addr = INADDR_ANY;
+    server_address.sin_addr.s_addr = inet_addr(SERVER_IP);
     server_address.sin_port = htons(PORT);
 
     // Bind socket to address
@@ -28,6 +34,9 @@ int main() {
         std::cerr << "Error binding socket" << std::endl;
         close(server_socket);
         return 1;
+    }
+    else {
+        std::cout << "Socket bound" << std::endl;
     }
 
     // Listen for incoming connections
@@ -60,6 +69,9 @@ int main() {
         close(server_socket);
         return 1;
     }
+    else {
+        std::cout << "Filename received: " << filename << std::endl;
+    }
 
     // Open file for writing
     std::ofstream outfile(filename, std::ios::binary);
@@ -68,6 +80,9 @@ int main() {
         close(client_socket);
         close(server_socket);
         return 1;
+    }
+    else {
+        std::cout << "File opened" << std::endl;
     }
 
     // Receive file data in loop
@@ -79,6 +94,10 @@ int main() {
 
     if (bytes_received == -1) {
         std::cerr << "Error receiving data" << std::endl;
+    }
+
+    else {
+        std::cout << "Data received" << std::endl;
     }
 
     outfile.close();

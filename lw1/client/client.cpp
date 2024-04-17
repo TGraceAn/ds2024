@@ -6,8 +6,8 @@
 #include <fstream>
 #include <unistd.h> // For close()
 
-#define SERVER_IP "localhost"
-#define PORT 5000
+#define SERVER_IP "127.0.0.1"
+#define PORT 8080
 
 int main(int argc, char* argv[]) {
     // Check if a filename is provided as a command-line argument
@@ -24,15 +24,22 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error creating socket" << std::endl;
         return 1;
     }
+    else {
+        std::cout << "Socket created" << std::endl;
+    }
 
     // Configure server address
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(PORT);
+
     if (inet_pton(AF_INET, SERVER_IP, &server_address.sin_addr) == -1) {
         std::cerr << "Error converting IP address" << std::endl;
         close(client_socket);
         return 1;
+    }
+    else {
+        std::cout << "IP address converted" << std::endl;
     }
 
     // Connect to the server
@@ -41,12 +48,18 @@ int main(int argc, char* argv[]) {
         close(client_socket);
         return 1;
     }
+    else {
+        std::cout << "Connected to server" << std::endl;
+    }
 
     // Send the filename to the server
     if (send(client_socket, filename, strlen(filename), 0) == -1) {
         std::cerr << "Error sending filename" << std::endl;
         close(client_socket);
         return 1;
+    }
+    else {
+        std::cout << "Filename sent" << std::endl;
     }
 
     // Open the file for reading
@@ -55,6 +68,9 @@ int main(int argc, char* argv[]) {
         std::cerr << "Error opening file" << std::endl;
         close(client_socket);
         return 1;
+    }
+    else {
+        std::cout << "File opened" << std::endl;
     }
 
     // Send the file data to the server
@@ -66,7 +82,11 @@ int main(int argc, char* argv[]) {
             close(client_socket);
             return 1;
         }
+            else {
+        std::cout << "Data sent" << std::endl;
+        }
     }
+
 
     infile.close();
     close(client_socket);
