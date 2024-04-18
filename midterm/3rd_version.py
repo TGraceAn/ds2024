@@ -107,5 +107,6 @@ while True:
         update_connection_count(reddit_server, -1)
         print('client disconnected')
         conn.close()
+    
     # finally:
     #     # conn.close()
